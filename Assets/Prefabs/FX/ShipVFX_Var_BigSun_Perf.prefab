@@ -48,6 +48,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2908749311287867946, guid: c84102c460ae473409af0e62adcf04f0,
+        type: 3}
+      propertyPath: VFXLaserMuzzle
+      value: 
+      objectReference: {fileID: 7736518137969145186, guid: cd4dae75950f06a49b0ab83ee435ff6e,
+        type: 3}
     - target: {fileID: 3185836734090207342, guid: c84102c460ae473409af0e62adcf04f0,
         type: 3}
       propertyPath: m_Enabled

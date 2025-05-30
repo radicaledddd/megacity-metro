@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: 98f9a8c815eba2a4c8fe254e1e57fb6b
+  productGUID: 41fbca3efc5803047b83af0447c2b81b
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -140,7 +140,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 1.5.0
+  bundleVersion: 1.3.0
   preloadedAssets:
   - {fileID: 11400000, guid: 7128c4874d3dbf248b2b0e80d868dbc5, type: 2}
   metroInputSource: 0
@@ -169,7 +169,7 @@ PlayerSettings:
     iPhone: com.unity.megacity.metro
   buildNumber:
     Bratwurst: 0
-    Standalone: 1.5.0
+    Standalone: 0
     VisionOS: 0
     iPhone: 0
     tvOS: 0
@@ -534,6 +534,9 @@ PlayerSettings:
   - m_BuildTarget: iOSSupport
     m_APIs: 10000000
     m_Automatic: 1
+  - m_BuildTarget: WindowsStandaloneSupport
+    m_APIs: 0200000012000000
+    m_Automatic: 0
   m_BuildTargetVRSettings: []
   m_DefaultShaderChunkSizeInMB: 16
   m_DefaultShaderChunkCount: 0
@@ -558,6 +561,7 @@ PlayerSettings:
   - serializedVersion: 2
     m_BuildTarget: WindowsStoreApps
     m_EncodingQuality: 2
+  m_BuildTargetGroupHDRCubemapEncodingQuality: []
   m_BuildTargetGroupLightmapSettings: []
   m_BuildTargetGroupLoadStoreDebugModeSettings: []
   m_BuildTargetNormalMapEncoding: []
@@ -977,11 +981,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: 
+  cloudProjectId: 7db1b5fa-e6b0-4054-a2fc-9c6ff290ceb7
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 
-  organizationId: 
+  projectName: MegacityMetro
+  organizationId: ugs-ga-dogfooding
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

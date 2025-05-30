@@ -1,7 +1,11 @@
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
+using Unity.Transforms;
+using UnityEngine;
 using static Unity.Entities.SystemAPI;
 
 namespace Unity.MegacityMetro.Gameplay
@@ -14,25 +18,56 @@ namespace Unity.MegacityMetro.Gameplay
     {
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<VehicleLaser>();
             state.RequireForUpdate<NetworkTime>();
-            state.RequireForUpdate<PhysicsWorldHistorySingleton>();
-            state.RequireForUpdate<PhysicsWorldSingleton>();
         }
-
+        
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var netTime = GetSingleton<NetworkTime>();
-            var laserJob = new LaserJob
+            var shootLaserJob = new ShootLaserJob
             {
-                CollisionHistory = GetSingleton<PhysicsWorldHistorySingleton>(),
-                PhysicsWorld = GetSingleton<PhysicsWorldSingleton>().PhysicsWorld,
-                DeltaTime = Time.DeltaTime,
-                PredictingTick = netTime.ServerTick,
+                DeltaTime = SystemAPI.Time.DeltaTime,
                 HealthLookup = GetComponentLookup<VehicleHealth>(true),
-                ImmunityLookup = GetComponentLookup<Immunity>(true),
             };
-            state.Dependency = laserJob.ScheduleParallel(state.Dependency);
+            state.Dependency = shootLaserJob.ScheduleParallel(state.Dependency);
+            state.Dependency.Complete();
+            
+            // Only spawn entities once
+            var networkTime = GetSingleton<NetworkTime>();
+            if (!networkTime.IsFirstPredictionTick)
+                return;
+            
+            using var cmdBuffer = new EntityCommandBuffer(Allocator.Temp);
+            foreach (var (vehicleLaser, localToWorld, physicsVelocity, networkId, entity)in Query<RefRO<VehicleLaser>, RefRO<LocalToWorld>, RefRO<PhysicsVelocity>, RefRO<NetworkId>>().WithEntityAccess())
+            {
+                // If vehicle is shooting, spawn a laser beam
+                if (vehicleLaser.ValueRO.Shoots)
+                {
+                    var laserBeam = cmdBuffer.Instantiate(vehicleLaser.ValueRO.LaserBeamPrefab);
+                    cmdBuffer.SetName(laserBeam, "LaserBeam");
+                    cmdBuffer.SetComponent(laserBeam, new LocalTransform()
+                    {
+                        // Place the entity at the front of the vehicle's laser plus an offset to avoid colliding with it as it spawns.
+                        Scale = 1,
+                        Position = localToWorld.ValueRO.Position + math.mul(localToWorld.ValueRO.Rotation.value.xyz, vehicleLaser.ValueRO.LocalLaserStartPoint),
+                        Rotation = localToWorld.ValueRO.Rotation
+                    });
+                    cmdBuffer.SetComponent(laserBeam, new PhysicsVelocity()
+                    {
+                        // Calculate the velocity of the laser beam taking the forward velocity of the vehicle into account.
+                        Linear = vehicleLaser.ValueRO.LaserBeamSpeed * localToWorld.ValueRO.Forward + physicsVelocity.ValueRO.Linear
+                    });
+                    
+                    cmdBuffer.SetComponent(laserBeam, new LaserBeam
+                    {
+                        PlayerSource = entity,
+                        Exploded = false
+                    });
+                    cmdBuffer.SetComponent(laserBeam, new GhostOwner {NetworkId = networkId.ValueRO.Value});
+                }
+            }
+            cmdBuffer.Playback(state.EntityManager);
         }
     }
 }

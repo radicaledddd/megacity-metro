@@ -23,93 +23,34 @@ public partial struct VehicleFXSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var laserVisualJob = new LaserVisualJob
-        {
-            LocalToWorldLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true),
-            CollisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld,
-        };
-        state.Dependency = laserVisualJob.ScheduleParallel(state.Dependency);
-
-        state.Dependency.Complete();
-        state.EntityManager.CompleteDependencyBeforeRW<LocalToWorld>();
-
         ComponentLookup<DynamicInstanceLinkCleanup> instanceLinkCleanupLookup = SystemAPI.GetComponentLookup<DynamicInstanceLinkCleanup>(true);
 
-        foreach (var (vehicleSettings, moveState, velocity, vehicleHealth, laser, ltw, immunity, entity) in SystemAPI.Query<
+        foreach (var (vehicleSettings, moveState, velocity, vehicleHealth, laser, ltw, immunity) in SystemAPI.Query<
                      RefRO<PlayerVehicleSettings>,
                      RefRO<VehicleMovementState>,
                      RefRO<PhysicsVelocity>,
                      RefRW<VehicleHealth>,
                      RefRO<VehicleLaser>,
                      RefRO<LocalToWorld>,
-                     RefRW<Immunity>>().WithEntityAccess())
+                     RefRW<Immunity>>())
         {
-            bool laserActive = laser.ValueRO.IsShooting && laser.ValueRO.Energy > 0;
-            float3 laserVector = laser.ValueRO.VFXLaserEndNode - laser.ValueRO.VFXLaserStartNode;
-            float3 laserDirection = math.normalizesafe(laserVector);
-            float laserLength = math.length(laserVector);
-            quaternion laserRotation = quaternion.LookRotation(laserDirection, math.up());
-
             if (GameObjectPool.GetPooledElement(vehicleSettings.ValueRO.VehicleFX, ref instanceLinkCleanupLookup, out GameObjectPoolElement vehicleFXElement))
             {
                 ShipFXManager fxManager = vehicleFXElement.GameObject.GetComponent<ShipFXManager>();
                 if (fxManager != null)
                 {
                     fxManager.transform.SetPositionAndRotation(ltw.ValueRO.Position, ltw.ValueRO.Rotation);
-
-                    // Laser
+                    // Laser;
+                    if (laser.ValueRO.Shoots)
                     {
-                        // Muzzle
-                        fxManager.VFXLazerMuzzle.enabled = laserActive;
-                        if (fxManager.VFXLazerMuzzle.enabled)
-                        {
-                            fxManager.VFXLazerMuzzle.transform.SetPositionAndRotation(laser.ValueRO.VFXLaserStartNode, laserRotation);
-                        }
-
-                        // Beam
-                        fxManager.VFXLazerBeam.enabled = laserActive;
-                        if (fxManager.VFXLazerBeam.enabled)
-                        {
-                            if (fxManager.VFXLazerBeam.HasFloat(ID_FXParam_BeamLength))
-                            {
-                                fxManager.VFXLazerBeam.SetFloat(ID_FXParam_BeamLength, laserLength);
-                            }
-                            fxManager.VFXLazerBeam.transform.SetPositionAndRotation(laser.ValueRO.VFXLaserStartNode, laserRotation);
-                        }
-
-                        // Beam audio
-                        if (laserActive && !fxManager.SFXLaserBeam.isPlaying)
-                        {
-                            fxManager.SFXLaserBeam.Play();
-                        }
-                        else if (!laserActive && fxManager.SFXLaserBeam.isPlaying)
-                        {
-                            fxManager.SFXLaserBeam.Stop();
-                        }
-
-                        // Hit
-                        bool isHittingTarget = laserActive && laser.ValueRO.DetectedTarget != Entity.Null;
-                        fxManager.VFXLazerHit.enabled = laser.ValueRO.ShowHitVFX;
-                        if (fxManager.VFXLazerHit.enabled)
-                        {
-                            if (fxManager.VFXLazerHit.HasBool(ID_FXParam_HitEffectActive))
-                            {
-                                fxManager.VFXLazerHit.SetBool(ID_FXParam_HitEffectActive, isHittingTarget);
-                            }
-                            fxManager.VFXLazerHit.transform.SetPositionAndRotation(laser.ValueRO.VFXLaserEndNode, laserRotation);
-                        }
-
-                        // Hit audio
-                        if (isHittingTarget && !fxManager.SFXLaserHit.isPlaying)
-                        {
-                            fxManager.SFXLaserHit.Play();
-                        }
-                        else if (!isHittingTarget && fxManager.SFXLaserHit.isPlaying)
-                        {
-                            fxManager.SFXLaserHit.Stop();
-                        }
+                        if (!fxManager.VFXLaserMuzzle.enabled)
+                            fxManager.VFXLaserMuzzle.enabled = true;
+                    }else
+                    {
+                        if (fxManager.VFXLaserMuzzle.enabled)
+                            fxManager.VFXLaserMuzzle.enabled = false;
                     }
-
+                    
                     // Car movement sound
                     {
                         if (vehicleHealth.ValueRO.IsDead == 0)

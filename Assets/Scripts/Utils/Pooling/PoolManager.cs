@@ -13,6 +13,7 @@ namespace MegacityMetro.Pooling
         VehicleFX_Xencor = 0,
         VehicleFX_Bion,
         VehicleFX_BigSun,
+        VehicleFX_LaserBeam,
     }
 
     public class PoolManager : MonoBehaviour

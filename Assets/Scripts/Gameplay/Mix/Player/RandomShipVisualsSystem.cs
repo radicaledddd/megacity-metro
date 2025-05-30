@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.MegacityMetro.Gameplay;
 using Unity.NetCode.Extensions;
 using Unity.Transforms;
+using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 public partial struct RandomShipVisualsSystem : ISystem
@@ -33,8 +34,7 @@ public partial struct RandomShipVisualsSystem : ISystem
             ecb.AppendToBuffer(legEntity.Entity, new LinkedEntityGroup { Value = instance});
             ecb.RemoveComponent<ShipRandomVisuals>(entity);
         }
-        
-        foreach (var (shipVisuals, rootEntity, entity) in SystemAPI.Query<ShipVisuals, RootEntity>().WithEntityAccess())
+        foreach (var (shipVisuals, rootEntity , entity) in SystemAPI.Query<ShipVisuals, RootEntity>().WithEntityAccess())
         {
             VehicleLaser vehicleLaser = SystemAPI.GetComponent<VehicleLaser>(rootEntity.Entity);
             vehicleLaser.LocalLaserStartPoint = shipVisuals.LocalLaserStartPoint;
@@ -45,7 +45,6 @@ public partial struct RandomShipVisualsSystem : ISystem
             SystemAPI.SetComponent(rootEntity.Entity, vehicleSettings);
 
             ecb.RemoveComponent<ShipVisuals>(entity);
-            ecb.RemoveComponent<RootEntity>(entity);
         }
     }
 }

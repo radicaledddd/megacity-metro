@@ -10,6 +10,21 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1658215580204977147, guid: ce31e7059430245c38bdbf69d2611f4b,
         type: 3}
+      propertyPath: DrainRate
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1658215580204977147, guid: ce31e7059430245c38bdbf69d2611f4b,
+        type: 3}
+      propertyPath: RegarcheRate
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1658215580204977147, guid: ce31e7059430245c38bdbf69d2611f4b,
+        type: 3}
+      propertyPath: LaserBeamSpeed
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 1658215580204977147, guid: ce31e7059430245c38bdbf69d2611f4b,
+        type: 3}
       propertyPath: SteeringSharpness
       value: 0.2
       objectReference: {fileID: 0}

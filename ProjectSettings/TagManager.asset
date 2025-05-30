@@ -11,18 +11,18 @@ TagManager:
   - Lights
   - Water
   - UI
-  - 
+  - LaserBeams
   - 
   - PostProcessing
   - Vehicles
+  - Buildings
   - 
-  - 
-  - 
+  - Traffic
   - 
   - 
   - 
   - OrthoShadowCaster
-  - 
+  - Border
   - 
   - 
   - 

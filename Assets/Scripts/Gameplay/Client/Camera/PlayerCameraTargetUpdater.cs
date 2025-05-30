@@ -35,13 +35,12 @@ namespace Unity.MegacityMetro.CameraManagement
                 }
 
                 HybridCameraManager.Instance.SetPlayerTargetPosition(ltw.ValueRO.Position + (math.up() * camTarget.ValueRO.VerticalOffset));
-                HybridCameraManager.Instance.UpdateAimCameraTargetPosition(laser.ValueRO.CalculateLaserEndPoint(ltw.ValueRO.Position, ltw.ValueRO.Rotation, ref localToWorldLookup, true));
+                HybridCameraManager.Instance.UpdateAimCameraTargetPosition(laser.ValueRO.CalculateLaserEndPoint(ltw.ValueRO.Position, ltw.ValueRO.Rotation, ref localToWorldLookup));
 
                 HybridCameraManager.Instance.CameraUpdate(deltaTime);
                 
                 if (HUD.Instance != null && HUD.Instance.Crosshair.IsVisible)
                 {
-                    HUD.Instance.Crosshair.SetTarget(laser.ValueRO.DetectedTarget != Entity.Null);
                     HUD.Instance.Crosshair.UpdatePosition(laser.ValueRO.CalculateLaserEndPoint(ltw.ValueRO.Position, ltw.ValueRO.Rotation, ref localToWorldLookup));
                 }
             }

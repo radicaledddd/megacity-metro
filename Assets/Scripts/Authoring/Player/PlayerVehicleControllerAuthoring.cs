@@ -30,17 +30,15 @@ namespace Unity.MegacityMetro.Authoring
         public float TargetFollowDamping = 2.0f;
         public float TargetSqLerpThreshold = 2500;
 
-        [Header("Laser")]
-        public LayerMask VehiclesPhysicsCategory;
-        public LayerMask LaserObstructionsPhysicsCategory;
-        public float DamagePerSecond = 50f;
+        [Header("VehicleLaser")]
         public float InitialEnergy = 100f;
-        public float ChargeSpeed = 2.5f;
-        public float DrainSpeed = 3f;
-        public float AutoAimDegrees = 20f;
-        public float AutoAimMinRadius = 3f;
-        public float LaserRange = 150f;
-
+        public float LaserBeamSpeed = 100f;
+        public float DrainRate = 1f;
+        public float FireRate = 0.2f;
+        public float RegarcheRate = 5f;
+        public float Damage = 20f;
+        public GameObject LaserBeamPrefab;
+        
         [Header("Immunity")]
         public float ImmunityDuration = 6.0f;
 
@@ -50,19 +48,16 @@ namespace Unity.MegacityMetro.Authoring
             public override void Bake(PlayerVehicleControllerAuthoring authoring)
             {
                 var entity = GetEntity(authoring.gameObject, TransformUsageFlags.Dynamic);
-
                 AddComponent(entity, new VehicleLaser
                 {
-                    DamagePerSecond = authoring.DamagePerSecond,
                     Energy = authoring.InitialEnergy,
-                    ChargerSpeed = authoring.ChargeSpeed,
-                    DrainSpeed = authoring.DrainSpeed,
-                    AutoAimDegrees = authoring.AutoAimDegrees,
-                    AutoAimMinRadius = authoring.AutoAimMinRadius,
-                    Range = authoring.LaserRange,
+                    DrainRate = authoring.DrainRate,
+                    FireRate = authoring.FireRate,
+                    LaserBeamSpeed = authoring.LaserBeamSpeed,
+                    RechargeRate = authoring.RegarcheRate,
+                    Damage = authoring.Damage,
 
-                    VehiclesFilter = PhysicsUtilities.ProduceCollisionFilter(authoring.VehiclesPhysicsCategory.value),
-                    LaserObstructionsFilter = PhysicsUtilities.ProduceCollisionFilter(authoring.LaserObstructionsPhysicsCategory.value),
+                    LaserBeamPrefab = GetEntity(authoring.LaserBeamPrefab, TransformUsageFlags.Dynamic)
                 });
 
 
