@@ -35,11 +35,10 @@ namespace Unity.MegacityMetro.Gameplay
             
             // Only spawn entities once
             var networkTime = GetSingleton<NetworkTime>();
-            if (!networkTime.IsFirstPredictionTick)
+            if (!networkTime.IsFirstTimeFullyPredictingTick)
                 return;
-            
             using var cmdBuffer = new EntityCommandBuffer(Allocator.Temp);
-            foreach (var (vehicleLaser, localToWorld, physicsVelocity, networkId, entity)in Query<RefRO<VehicleLaser>, RefRO<LocalToWorld>, RefRO<PhysicsVelocity>, RefRO<NetworkId>>().WithEntityAccess())
+            foreach (var (vehicleLaser, localToWorld, physicsVelocity, ghostOwner, entity)in Query<RefRO<VehicleLaser>, RefRO<LocalToWorld>, RefRO<PhysicsVelocity>, RefRO<GhostOwner>>().WithEntityAccess())
             {
                 // If vehicle is shooting, spawn a laser beam
                 if (vehicleLaser.ValueRO.Shoots)
@@ -53,18 +52,18 @@ namespace Unity.MegacityMetro.Gameplay
                         Position = localToWorld.ValueRO.Position + math.mul(localToWorld.ValueRO.Rotation.value.xyz, vehicleLaser.ValueRO.LocalLaserStartPoint),
                         Rotation = localToWorld.ValueRO.Rotation
                     });
-                    cmdBuffer.SetComponent(laserBeam, new PhysicsVelocity()
+                    cmdBuffer.AddComponent(laserBeam, new PhysicsVelocity()
                     {
                         // Calculate the velocity of the laser beam taking the forward velocity of the vehicle into account.
                         Linear = vehicleLaser.ValueRO.LaserBeamSpeed * localToWorld.ValueRO.Forward + physicsVelocity.ValueRO.Linear
                     });
                     
-                    cmdBuffer.SetComponent(laserBeam, new LaserBeam
+                    cmdBuffer.AddComponent(laserBeam, new LaserBeam
                     {
                         PlayerSource = entity,
                         Exploded = false
                     });
-                    cmdBuffer.SetComponent(laserBeam, new GhostOwner {NetworkId = networkId.ValueRO.Value});
+                    cmdBuffer.AddComponent(laserBeam, new GhostOwner {NetworkId = ghostOwner.ValueRO.NetworkId});
                 }
             }
             cmdBuffer.Playback(state.EntityManager);
