@@ -72,7 +72,7 @@ MonoBehaviour:
   FireRate: 0.2
   RegarcheRate: 5
   Damage: 20
-  LaserBeamPrefab: {fileID: 3153090887833783256, guid: 4236010ebb7cb0d4f8b57b571528f9eb,
+  LaserBeamPrefab: {fileID: 3153090887833783256, guid: 901eb1d9e97cebf419979f4107703298,
     type: 3}
   ImmunityDuration: 4.5
 --- !u!114 &2368080179726341963
@@ -140,14 +140,12 @@ MonoBehaviour:
   SupportedGhostModes: 3
   OptimizationMode: 0
   Importance: 10
-  MaxSendRate: 0
   prefabId: ce31e7059430245c38bdbf69d2611f4b
   HasOwner: 1
   SupportAutoCommandTarget: 1
   TrackInterpolationDelay: 1
   GhostGroup: 0
   UsePreSerialization: 0
-  UseSingleBaseline: 0
   RollbackPredictedSpawnedGhostState: 0
   RollbackPredictionOnStructuralChanges: 1
 --- !u!114 &2944583097200774926
