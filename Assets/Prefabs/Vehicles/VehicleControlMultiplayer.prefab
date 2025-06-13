@@ -67,7 +67,7 @@ MonoBehaviour:
   TargetFollowDamping: 2
   TargetSqLerpThreshold: 2500
   InitialEnergy: 100
-  LaserBeamSpeed: 120
+  LaserBeamSpeed: 400
   DrainRate: 5
   FireRate: 0.2
   RegarcheRate: 5

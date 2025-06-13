@@ -52,7 +52,6 @@ namespace Unity.MegacityMetro.Gameplay
                         Position = localToWorld.ValueRO.Position + math.mul(localToWorld.ValueRO.Rotation.value.xyz, vehicleLaser.ValueRO.LocalLaserStartPoint),
                         Rotation = localToWorld.ValueRO.Rotation
                     });
-                    cmdBuffer.AddComponent(laserBeam, PhysicsMass.CreateDynamic(MassProperties.UnitSphere, 1f));
                     cmdBuffer.AddComponent(laserBeam, new PhysicsVelocity()
                     {
                         // Calculate the velocity of the laser beam taking the forward velocity of the vehicle into account.

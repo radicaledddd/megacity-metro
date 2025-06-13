@@ -52,8 +52,6 @@ namespace Unity.MegacityMetro.Gameplay
                 return;
             }
             sourceLaserBeam.Exploded = true;
-            
-            Debug.LogWarning("Laser beam hit a vehicle !");
         }
     }
 }
