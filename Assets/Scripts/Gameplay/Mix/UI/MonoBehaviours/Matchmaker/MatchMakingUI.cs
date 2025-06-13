@@ -1,6 +1,7 @@
 using System;
 using Unity.MegacityMetro.Gameplay;
 using Unity.MegacityMetro.UGS;
+using Unity.NetCode;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.UIElements.Experimental;
@@ -22,6 +23,7 @@ namespace Unity.MegacityMetro.UI
         private Button m_MultiplayerPlayButton;
         private TextField m_NameTextField;
         private Button m_MultiplayerReturnButton;
+        private Button m_LocalhostButton;
         private VisualElement m_MultiplayerModeGroup;
 
         public static MatchMakingUI Instance { get; private set; }
@@ -54,9 +56,17 @@ namespace Unity.MegacityMetro.UI
             m_NameTextField = multiplayerMenuOptions.Q<TextField>("name-textfield");
             m_MultiplayerPlayButton = multiplayerMenuOptions.Q<Button>("multiplayer-play-button");
             m_MultiplayerReturnButton = multiplayerMenuOptions.Q<Button>("multiplayer-return-button");
+            m_LocalhostButton = multiplayerMenuOptions.Q<Button>("localhost");
             m_MultiplayerModeGroup = multiplayerMenuOptions.Q<VisualElement>("multiplayer-mode");
+
+            m_LocalhostButton.clicked += Localhost;
             
             m_MatchmakingLoadingBar.AddToClassList(UIConstants.k_HiddenUssElementClass);
+        }
+
+        private void Localhost()
+        {
+            ServerConnectionUtils.RequestConnection("127.0.0.1", 3600);
         }
 
         public bool TryUpdateIPAndPort(string currentIP, out string ip, out ushort port)

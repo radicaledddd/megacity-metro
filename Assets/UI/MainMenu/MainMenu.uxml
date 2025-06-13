@@ -31,7 +31,8 @@
                         <ui:VisualElement name="multiplayer-button-strip" class="button-strip__wide">
                             <ui:Button tabindex="4" text="RETURN" display-tooltip-when-elided="true" name="multiplayer-return-button" class="menu-button" />
                             <ui:Button tabindex="3" text="PLAY" display-tooltip-when-elided="true" name="multiplayer-play-button" class="menu-button" />
-                            <ui:Button text="Refresh" name="session-refresh-button" class="menu-button" style="align-content: flex-start; align-self: center;" />
+                            <ui:Button text="Refresh" name="session-refresh-button" class="menu-button" />
+                            <ui:Button text="LocalHost" name="localhost" class="menu-button" style="align-self: center; white-space: nowrap;" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:GroupBox>
