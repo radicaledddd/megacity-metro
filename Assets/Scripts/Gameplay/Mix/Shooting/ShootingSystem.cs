@@ -61,6 +61,7 @@ namespace Unity.MegacityMetro.Gameplay
                     cmdBuffer.AddComponent(laserBeam, new LaserBeam
                     {
                         PlayerSource = entity,
+                        NetworkId = ghostOwner.ValueRO.NetworkId,
                         Exploded = false
                     });
                     cmdBuffer.AddComponent(laserBeam, new GhostOwner {NetworkId = ghostOwner.ValueRO.NetworkId});

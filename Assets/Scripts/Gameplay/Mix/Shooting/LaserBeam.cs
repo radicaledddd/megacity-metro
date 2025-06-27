@@ -6,6 +6,7 @@ namespace Unity.MegacityMetro.Gameplay
     public struct LaserBeam : IComponentData
     {
         public Entity PlayerSource;
+        public int NetworkId;
         public bool Exploded;
     }
 }

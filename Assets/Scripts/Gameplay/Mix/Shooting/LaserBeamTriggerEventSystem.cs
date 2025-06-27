@@ -5,6 +5,7 @@ using Unity.NetCode.Extensions;
 using Unity.Physics;
 using Unity.Rendering;
 using Unity.Transforms;
+using UnityEngine;
 using static Unity.Entities.SystemAPI;
 
 namespace Unity.MegacityMetro.Gameplay
@@ -35,13 +36,19 @@ public partial struct LaserBeamTriggerEventSystem : ISystem
                 ImmunityLookup =  GetComponentLookup<Immunity>(true),
                 VehicleLaserLookup =  GetComponentLookup<VehicleLaser>(true),
                 PlayerNameLookup =  GetComponentLookup<PlayerName>(true),
+                GhostOwnerLookup = GetComponentLookup<GhostOwner>(true),
             };
             state.Dependency = triggerJob.Schedule(GetSingleton<SimulationSingleton>(),state.Dependency);
             state.Dependency.Complete();
             if (isServer)
             {
+                if (!networkTime.IsFirstTimeFullyPredictingTick)
+                {
+                    Debug.LogWarning("It was needed");
+                }
                 if (laserBeamsExploded.Length > 0)
                 {
+                    Debug.LogWarning($"Disposing {laserBeamsExploded.Length} entities server side");
                     var arr = laserBeamsExploded.ToArray(Allocator.TempJob);
                     state.EntityManager.DestroyEntity(arr);
                     arr.Dispose();
@@ -51,6 +58,8 @@ public partial struct LaserBeamTriggerEventSystem : ISystem
             {
                 if (networkTime.IsFirstTimeFullyPredictingTick)
                 {
+                    if(laserBeamsExploded.Length > 0)
+                        Debug.LogWarning($"Hiding {laserBeamsExploded.Length} entities client side");
                     var commandBuffer = new EntityCommandBuffer(state.WorldUpdateAllocator);
                     foreach (var laserBeamExploded in laserBeamsExploded)
                     {

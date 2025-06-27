@@ -1,8 +1,10 @@
 ﻿using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.NetCode;
 using Unity.NetCode.Extensions;
 using Unity.Physics;
+using Unity.Transforms;
 using UnityEngine;
 
 namespace Unity.MegacityMetro.Gameplay
@@ -21,6 +23,8 @@ namespace Unity.MegacityMetro.Gameplay
         internal ComponentLookup<VehicleLaser> VehicleLaserLookup;
         [ReadOnly]
         internal ComponentLookup<PlayerName> PlayerNameLookup;
+        [ReadOnly]
+        internal ComponentLookup<GhostOwner> GhostOwnerLookup;
         
         public void Execute(TriggerEvent collisionEvent)
         {
@@ -39,7 +43,7 @@ namespace Unity.MegacityMetro.Gameplay
                 }
                 else
                 {
-                    // This job only deals with laser
+                    // This jobs only deals with lasers
                     return;
                 }
             }
@@ -51,27 +55,47 @@ namespace Unity.MegacityMetro.Gameplay
             }
             else
             {
-                targetVehicleEntity = collisionEvent.EntityA;
                 if(VehicleHealthLookup.TryGetComponent(collisionEvent.EntityB, out targetHealth))
                 {
                     targetVehicleEntity = collisionEvent.EntityB;
                 }
             }
 
-            // If the laser hit his own vehicle, ignore it
-            if (sourceLaserBeam.PlayerSource == targetVehicleEntity)
+            GhostOwner targetGhostOwner = default;
+
+            if (targetVehicleEntity != default && !GhostOwnerLookup.TryGetComponent(targetVehicleEntity, out targetGhostOwner))
             {
+                Debug.Log("GhostOwner lookup not found");
                 return;
             }
 
+            if (targetVehicleEntity != default && targetVehicleEntity == sourceLaserBeamEntity)
+            {
+                if (collisionEvent.EntityA == collisionEvent.EntityB)
+                {
+                    Debug.LogWarning("they are really equal !!!");
+                }
+                Debug.LogWarning("Source and target are equal ??? ignoring");
+                return;
+            }
+            
+            // If the laser hit his own vehicle, ignore it
+            if (targetVehicleEntity != default && sourceLaserBeam.NetworkId == targetGhostOwner.NetworkId)
+            {
+                Debug.LogWarning($"Player {sourceLaserBeam.NetworkId} it is own vehicle {targetGhostOwner.NetworkId}, ignoring");
+                return;
+            }
+            
             // If the laser hits anything, destroy it.
             LaserBeamsExploded.Add(sourceLaserBeamEntity);
 
             // Only the server deals the damage and kill confirmation
             if (!IsServer)
             {
+                Debug.LogWarning("Hit a vehicle with client, ignoring");
                 return;
             }
+            Debug.LogWarning("Hit a vehicle with server, proceeding");
             
             ImmunityLookup.TryGetComponent(targetVehicleEntity, out var targetImmunity);
             
@@ -84,7 +108,10 @@ namespace Unity.MegacityMetro.Gameplay
                 !PlayerScoreLookup.TryGetComponent(targetVehicleEntity, out var targetScore) ||
                 !PlayerNameLookup.TryGetComponent(sourceLaserBeam.PlayerSource, out var sourceName) ||
                 !PlayerNameLookup.TryGetComponent(targetVehicleEntity, out var targetName))
+            {
+                Debug.LogWarning("Laser beam hit something else, destroying it");
                 return;
+            }
             
             Debug.LogWarning("Laser beam hit a vehicle !");
             // Damage the target
