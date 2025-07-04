@@ -8,5 +8,6 @@ namespace Unity.MegacityMetro.Gameplay
         public Entity PlayerSource;
         public int NetworkId;
         public bool Exploded;
+        public int uniqueID;
     }
 }

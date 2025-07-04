@@ -9,12 +9,12 @@ using UnityEngine;
 
 namespace Unity.MegacityMetro.Gameplay
 {
-    public partial struct LaserBeamTriggerEventJob : ITriggerEventsJob
+    public partial struct ServerLaserBeamTriggerEventJob : ITriggerEventsJob
     {
-        internal bool IsServer;
         internal NativeList<Entity> LaserBeamsExploded;
         internal ComponentLookup<VehicleHealth> VehicleHealthLookup;
         internal ComponentLookup<PlayerScore> PlayerScoreLookup;
+        [ReadOnly]
         internal ComponentLookup<LaserBeam> LaserBeamLookup;
         [ReadOnly]
         internal ComponentLookup<Immunity> ImmunityLookup;
@@ -27,7 +27,7 @@ namespace Unity.MegacityMetro.Gameplay
         
         public void Execute(TriggerEvent collisionEvent)
         {
-            // This jobs handles laser collisions
+            // This jobs handles laser collisionss
             // This assumes an entity cannot have a LaserBeam and a VehicleHealth component at the same time
             Entity sourceLaserBeamEntity = default;
             if (LaserBeamLookup.TryGetComponent(collisionEvent.EntityA, out var sourceLaserBeam))
@@ -45,13 +45,6 @@ namespace Unity.MegacityMetro.Gameplay
                     // This jobs only deals with lasers
                     return;
                 }
-            }
-
-            if (!IsServer && sourceLaserBeam.Exploded)
-            {
-                Debug.LogWarning($"Abort due to isServer {IsServer}, isExplosed {sourceLaserBeam.Exploded}");
-                // We already handled hiding the entity on the client
-                return;
             }
 
             Entity targetVehicleEntity = default;
@@ -92,16 +85,8 @@ namespace Unity.MegacityMetro.Gameplay
                 return;
             }
 
-            // If the laser hits anything, destroy it.
-            sourceLaserBeam.Exploded = true;
             LaserBeamsExploded.Add(sourceLaserBeamEntity);
 
-            // Only the server deals the damage and kill confirmation
-            if (!IsServer)
-            {
-                Debug.LogWarning("Hit a vehicle with client, ignoring");
-                return;
-            }
             Debug.LogWarning("Hit a vehicle with server, proceeding");
             
             ImmunityLookup.TryGetComponent(targetVehicleEntity, out var targetImmunity);
