@@ -15,7 +15,6 @@ namespace Unity.MegacityMetro.Gameplay
         internal NativeList<Entity> LaserBeamsExploded;
         internal ComponentLookup<VehicleHealth> VehicleHealthLookup;
         internal ComponentLookup<PlayerScore> PlayerScoreLookup;
-        [ReadOnly]
         internal ComponentLookup<LaserBeam> LaserBeamLookup;
         [ReadOnly]
         internal ComponentLookup<Immunity> ImmunityLookup;
@@ -48,6 +47,13 @@ namespace Unity.MegacityMetro.Gameplay
                 }
             }
 
+            if (!IsServer && sourceLaserBeam.Exploded)
+            {
+                Debug.LogWarning($"Abort due to isServer {IsServer}, isExplosed {sourceLaserBeam.Exploded}");
+                // We already handled hiding the entity on the client
+                return;
+            }
+
             Entity targetVehicleEntity = default;
             if (VehicleHealthLookup.TryGetComponent(collisionEvent.EntityA, out var targetHealth))
             {
@@ -65,7 +71,7 @@ namespace Unity.MegacityMetro.Gameplay
 
             if (targetVehicleEntity != default && !GhostOwnerLookup.TryGetComponent(targetVehicleEntity, out targetGhostOwner))
             {
-                Debug.Log("GhostOwner lookup not found");
+                Debug.LogError("GhostOwner lookup not found");
                 return;
             }
 
@@ -73,20 +79,21 @@ namespace Unity.MegacityMetro.Gameplay
             {
                 if (collisionEvent.EntityA == collisionEvent.EntityB)
                 {
-                    Debug.LogWarning("they are really equal !!!");
+                    Debug.LogError("they are really equal !!!");
                 }
-                Debug.LogWarning("Source and target are equal ??? ignoring");
+                Debug.LogError("Source and target are equal ??? ignoring");
                 return;
             }
             
             // If the laser hit his own vehicle, ignore it
             if (targetVehicleEntity != default && sourceLaserBeam.NetworkId == targetGhostOwner.NetworkId)
             {
-                Debug.LogWarning($"Player {sourceLaserBeam.NetworkId} it is own vehicle {targetGhostOwner.NetworkId}, ignoring");
+                Debug.Log($"Player {sourceLaserBeam.NetworkId} it is own vehicle {targetGhostOwner.NetworkId}, ignoring");
                 return;
             }
-            
+
             // If the laser hits anything, destroy it.
+            sourceLaserBeam.Exploded = true;
             LaserBeamsExploded.Add(sourceLaserBeamEntity);
 
             // Only the server deals the damage and kill confirmation
