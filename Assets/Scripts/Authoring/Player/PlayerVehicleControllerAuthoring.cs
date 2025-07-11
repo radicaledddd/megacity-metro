@@ -37,7 +37,6 @@ namespace Unity.MegacityMetro.Authoring
         public float FireRate = 0.2f;
         public float RegarcheRate = 5f;
         public float Damage = 20f;
-        public GameObject LaserBeamPrefab;
         
         [Header("Immunity")]
         public float ImmunityDuration = 6.0f;
@@ -56,10 +55,7 @@ namespace Unity.MegacityMetro.Authoring
                     LaserBeamSpeed = authoring.LaserBeamSpeed,
                     RechargeRate = authoring.RegarcheRate,
                     Damage = authoring.Damage,
-
-                    LaserBeamPrefab = GetEntity(authoring.LaserBeamPrefab, TransformUsageFlags.Dynamic)
                 });
-
 
                 var ignoreLaser = AddBuffer<WeaponShotIgnoredEntity>(entity);
                 ignoreLaser.Add(new WeaponShotIgnoredEntity { Value = entity });

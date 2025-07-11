@@ -18,7 +18,9 @@
         "Unity.MegacityMetro.Gameplay.Mix",
         "Unity.Networking.Transport",
         "Unity.Services.UGS.Server",
-        "Unity.Services.UGS.Authentication"
+        "Unity.Services.UGS.Authentication",
+        "Unity.MegacityMetro.Common",
+        "Unity.Services.UGS.Client"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

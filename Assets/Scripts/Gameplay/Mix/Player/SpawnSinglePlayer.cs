@@ -15,7 +15,7 @@ namespace Unity.MegacityMetro.Gameplay
 
         public void OnCreate(ref SystemState state)
         {
-            m_PlayerQuery = state.GetEntityQuery(ComponentType.ReadOnly<SinglePlayer>());
+            m_PlayerQuery = state.GetEntityQuery(ComponentType.ReadOnly<SinglePlayer>());   
             state.RequireForUpdate<PlayerSpawner>();
             state.RequireForUpdate<SpawnPointElement>();
         }

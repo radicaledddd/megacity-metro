@@ -20,7 +20,8 @@
         "Unity.MegacityMetro.Components",
         "Unity.Entities.Build",
         "Unity.Scenes",
-        "Unity.MegacityMetro.Utils"
+        "Unity.MegacityMetro.Utils",
+        "Unity.MegacityMetro.Common"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

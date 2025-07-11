@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.02, y: 0, z: 17.86}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -128,6 +128,9 @@ VFXRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_StaticBatchInfo:
@@ -162,6 +165,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: -1685746344808762058, guid: 350db6d18f8315347b5656f8b3082181,
     type: 2}
   m_audioClip: {fileID: 8300000, guid: 58ab3341caca75a49b98c7d07b16dc53, type: 3}
+  m_Resource: {fileID: 8300000, guid: 58ab3341caca75a49b98c7d07b16dc53, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

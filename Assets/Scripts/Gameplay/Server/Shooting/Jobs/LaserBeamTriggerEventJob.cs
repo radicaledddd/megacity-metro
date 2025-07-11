@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Unity.MegacityMetro.Gameplay
 {
-    public partial struct ServerLaserBeamTriggerEventJob : ITriggerEventsJob
+    public partial struct ServerLaserBeamTriggerEventJob : ICollisionEventsJob
     {
         internal NativeList<Entity> LaserBeamsExploded;
         internal ComponentLookup<VehicleHealth> VehicleHealthLookup;
@@ -25,7 +25,7 @@ namespace Unity.MegacityMetro.Gameplay
         [ReadOnly]
         internal ComponentLookup<GhostOwner> GhostOwnerLookup;
         
-        public void Execute(TriggerEvent collisionEvent)
+        public void Execute(CollisionEvent collisionEvent)
         {
             // This jobs handles laser collisionss
             // This assumes an entity cannot have a LaserBeam and a VehicleHealth component at the same time

@@ -25,7 +25,8 @@
         "VivoxUnity",
         "Unity.RenderPipelines.Universal.Runtime",
         "Unity.MegacityMetro.Utils",
-        "Unity.Splines"
+        "Unity.Splines",
+        "Unity.MegacityMetro.Common"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
+using Unity.Physics.Systems;
 using Unity.Transforms;
 using UnityEngine;
 using static Unity.Entities.SystemAPI;
@@ -18,7 +19,7 @@ namespace Unity.MegacityMetro.Gameplay
     {
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<VehicleLaser>();
+            state.RequireForUpdate<LaserBeamSpawner>();
             state.RequireForUpdate<NetworkTime>();
         }
         
@@ -37,13 +38,14 @@ namespace Unity.MegacityMetro.Gameplay
             var networkTime = GetSingleton<NetworkTime>();
             if (!networkTime.IsFirstTimeFullyPredictingTick)
                 return;
+            var laserBeamSpawner = GetSingleton<LaserBeamSpawner>();
             using var cmdBuffer = new EntityCommandBuffer(Allocator.Temp);
             foreach (var (vehicleLaser, localToWorld, physicsVelocity, ghostOwner, entity)in Query<RefRO<VehicleLaser>, RefRO<LocalToWorld>, RefRO<PhysicsVelocity>, RefRO<GhostOwner>>().WithEntityAccess())
             {
                 // If vehicle is shooting, spawn a laser beam
                 if (vehicleLaser.ValueRO.Shoots)
                 {
-                    var laserBeam = cmdBuffer.Instantiate(vehicleLaser.ValueRO.LaserBeamPrefab);
+                    var laserBeam = cmdBuffer.Instantiate(laserBeamSpawner.LaserBeamPrefab);
                     cmdBuffer.SetName(laserBeam, "LaserBeam");
                     cmdBuffer.SetComponent(laserBeam, new LocalTransform()
                     {

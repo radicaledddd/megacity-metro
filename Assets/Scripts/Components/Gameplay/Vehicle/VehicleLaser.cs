@@ -18,7 +18,6 @@ namespace Unity.MegacityMetro.Gameplay
         public float LaserBeamSpeed;
         public float Damage;
         public float3 LocalLaserStartPoint;
-        public Entity LaserBeamPrefab;
         
         public float3 VFXLaserStartNode;
         public float3 VFXLaserEndNode;

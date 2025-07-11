@@ -3,12 +3,14 @@ using Unity.Entities;
 using Unity.NetCode;
 using Unity.NetCode.Extensions;
 using Unity.Physics;
+using Unity.Physics.Systems;
 using UnityEngine;
 using static Unity.Entities.SystemAPI;
 
 namespace Unity.MegacityMetro.Gameplay
 {
 
+[UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
 [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial struct ServerLaserBeamTriggerEventSystem : ISystem
     {
@@ -21,12 +23,7 @@ public partial struct ServerLaserBeamTriggerEventSystem : ISystem
 
         public void OnUpdate(ref SystemState state)
         {
-            var networkTime = GetSingleton<NetworkTime>()
-
-
-
-
-            ;
+            var networkTime = GetSingleton<NetworkTime>();
 
             using var laserBeamsExploded = new NativeList<Entity>(Allocator.TempJob);
             var triggerJob = new ServerLaserBeamTriggerEventJob()
@@ -48,13 +45,13 @@ public partial struct ServerLaserBeamTriggerEventSystem : ISystem
                 var arr = laserBeamsExploded.ToArray(Allocator.TempJob);
                 foreach (var laserBeam in arr)
                 {
-                    string logMsg = $"Laser beam destroyed: Entity={laserBeam.Index}";
+                    string logMsg = $"Laser beam destroyed: Entity={laserBeam.Index} V{laserBeam.Version}";
                     if (state.EntityManager.HasComponent<GhostOwner>(laserBeam))
                     {
                         var ghostOwner = state.EntityManager.GetComponentData<GhostOwner>(laserBeam);
                         logMsg += $", NetworkID={ghostOwner.NetworkId}";
                     }
-                    Debug.Log($"{logMsg} at tick {networkTime.ServerTick}");
+                    Debug.LogWarning($"{logMsg} destroyed at tick {networkTime.ServerTick}");
                 }
                 state.EntityManager.DestroyEntity(arr);
                 arr.Dispose();

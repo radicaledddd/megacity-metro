@@ -2,20 +2,23 @@
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Physics;
+using Unity.Transforms;
 using UnityEngine;
 
 namespace Unity.MegacityMetro.Gameplay
 {
-    public partial struct ClientLaserBeamTriggerEventJob : ITriggerEventsJob
+    public partial struct ClientLaserBeamTriggerEventJob : ICollisionEventsJob
     {
-        internal NativeList<Entity> LaserBeamsExploded;
-        [ReadOnly]
-        internal ComponentLookup<VehicleHealth> VehicleHealthLookup;
+        internal NativeList<(Entity, LocalTransform)> LaserBeamsExploded;
         internal ComponentLookup<LaserBeam> LaserBeamLookup;
         [ReadOnly]
+        internal ComponentLookup<VehicleHealth> VehicleHealthLookup;
+        [ReadOnly]
         internal ComponentLookup<GhostOwner> GhostOwnerLookup;
+        [ReadOnly]
+        internal ComponentLookup<LocalTransform> LocalTransformLookup;
         
-        public void Execute(TriggerEvent collisionEvent)
+        public void Execute(CollisionEvent collisionEvent)
         {
             // This jobs handles laser collisions
             // This assumes an entity cannot have a LaserBeam and a VehicleHealth component at the same time
@@ -39,7 +42,7 @@ namespace Unity.MegacityMetro.Gameplay
 
             if (sourceLaserBeam.Exploded)
             {
-                Debug.LogWarning("Abort due to isServer isExplosed");
+                Debug.LogWarning("Abort due to isServer isExploded");
                 // We already handled hiding the entity on the client
                 return;
             }
@@ -81,9 +84,11 @@ namespace Unity.MegacityMetro.Gameplay
                 Debug.Log($"Player {sourceLaserBeam.NetworkId} it is own vehicle {targetGhostOwner.NetworkId}, ignoring");
                 return;
             }
-
+            
             sourceLaserBeam.Exploded = true;
-            LaserBeamsExploded.Add(sourceLaserBeamEntity);
+            LaserBeamLookup[sourceLaserBeamEntity] = sourceLaserBeam;
+            LocalTransformLookup.TryGetComponent(sourceLaserBeamEntity, out var laserBeamTransform);
+            LaserBeamsExploded.Add((sourceLaserBeamEntity, laserBeamTransform));
         }
     }
 }
