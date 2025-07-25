@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace Unity.MegacityMetro.Authoring
 {
-    public class LaserBeamAuthoring : MonoBehaviour
+    public class LaserBeamSpawnerAuthoring : MonoBehaviour
     {
         public GameObject LaserBeamPrefab;
         public GameObject ExplosionPrefab;
 
-        public class LaserBeamAuthoringBaker : Baker<LaserBeamAuthoring>
+        [BakingVersion("megacity-metro", 1)]
+        public class Baker : Baker<LaserBeamSpawnerAuthoring>
         {
-            
-            public override void Bake(LaserBeamAuthoring authoring)
+            public override void Bake(LaserBeamSpawnerAuthoring authoring)
             {
                 var entity = GetEntity(authoring.gameObject, TransformUsageFlags.Dynamic);
                 AddComponent(entity, new LaserBeamSpawner

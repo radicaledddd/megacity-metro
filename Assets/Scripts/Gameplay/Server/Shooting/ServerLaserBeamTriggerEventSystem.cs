@@ -51,7 +51,7 @@ public partial struct ServerLaserBeamTriggerEventSystem : ISystem
                         var ghostOwner = state.EntityManager.GetComponentData<GhostOwner>(laserBeam);
                         logMsg += $", NetworkID={ghostOwner.NetworkId}";
                     }
-                    Debug.LogWarning($"{logMsg} destroyed at tick {networkTime.ServerTick}");
+                    //Debug.LogWarning($"{logMsg} destroyed at tick {networkTime.ServerTick}");
                 }
                 state.EntityManager.DestroyEntity(arr);
                 arr.Dispose();

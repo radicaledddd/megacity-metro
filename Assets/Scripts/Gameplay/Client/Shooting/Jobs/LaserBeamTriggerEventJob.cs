@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Unity.MegacityMetro.Gameplay
 {
-    public partial struct ClientLaserBeamTriggerEventJob : ICollisionEventsJob
+    public partial struct ClientLaserBeamTriggerEventJob : ITriggerEventsJob
     {
         internal NativeList<(Entity, LocalTransform)> LaserBeamsExploded;
         internal ComponentLookup<LaserBeam> LaserBeamLookup;
@@ -18,20 +18,20 @@ namespace Unity.MegacityMetro.Gameplay
         [ReadOnly]
         internal ComponentLookup<LocalTransform> LocalTransformLookup;
         
-        public void Execute(CollisionEvent collisionEvent)
+        public void Execute(TriggerEvent triggerEvent)
         {
             // This jobs handles laser collisions
             // This assumes an entity cannot have a LaserBeam and a VehicleHealth component at the same time
             Entity sourceLaserBeamEntity = default;
-            if (LaserBeamLookup.TryGetComponent(collisionEvent.EntityA, out var sourceLaserBeam))
+            if (LaserBeamLookup.TryGetComponent(triggerEvent.EntityA, out var sourceLaserBeam))
             {
-                sourceLaserBeamEntity = collisionEvent.EntityA;
+                sourceLaserBeamEntity = triggerEvent.EntityA;
             }
             else
             {
-                if (LaserBeamLookup.TryGetComponent(collisionEvent.EntityB, out sourceLaserBeam))
+                if (LaserBeamLookup.TryGetComponent(triggerEvent.EntityB, out sourceLaserBeam))
                 {
-                    sourceLaserBeamEntity = collisionEvent.EntityB;
+                    sourceLaserBeamEntity = triggerEvent.EntityB;
                 }
                 else
                 {
@@ -48,15 +48,15 @@ namespace Unity.MegacityMetro.Gameplay
             }
 
             Entity targetVehicleEntity = default;
-            if (VehicleHealthLookup.TryGetComponent(collisionEvent.EntityA, out var targetHealth))
+            if (VehicleHealthLookup.TryGetComponent(triggerEvent.EntityA, out var targetHealth))
             {
-                targetVehicleEntity = collisionEvent.EntityA;
+                targetVehicleEntity = triggerEvent.EntityA;
             }
             else
             {
-                if(VehicleHealthLookup.TryGetComponent(collisionEvent.EntityB, out targetHealth))
+                if(VehicleHealthLookup.TryGetComponent(triggerEvent.EntityB, out targetHealth))
                 {
-                    targetVehicleEntity = collisionEvent.EntityB;
+                    targetVehicleEntity = triggerEvent.EntityB;
                 }
             }
 
@@ -70,7 +70,7 @@ namespace Unity.MegacityMetro.Gameplay
 
             if (targetVehicleEntity != default && targetVehicleEntity == sourceLaserBeamEntity)
             {
-                if (collisionEvent.EntityA == collisionEvent.EntityB)
+                if (triggerEvent.EntityA == triggerEvent.EntityB)
                 {
                     Debug.LogError("they are really equal !!!");
                 }

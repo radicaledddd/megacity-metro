@@ -70,12 +70,8 @@ MonoBehaviour:
   LaserBeamSpeed: 400
   DrainRate: 5
   FireRate: 0.2
-  RegarcheRate: 5
+  RegarcheRate: 20
   Damage: 20
-  LaserBeamPrefab: {fileID: 3153090887833783256, guid: 901eb1d9e97cebf419979f4107703298,
-    type: 3}
-  ExplosionPrefab: {fileID: 5454028126815171339, guid: afa76f11c2460a747abefdec3ab3716f,
-    type: 3}
   ImmunityDuration: 4.5
 --- !u!114 &2368080179726341963
 MonoBehaviour:

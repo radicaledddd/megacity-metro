@@ -12,7 +12,12 @@ using static Unity.Entities.SystemAPI;
 namespace Unity.MegacityMetro.Gameplay
 {
 
-[UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
+    public partial struct LaserBeamExplosion : IComponentData
+    {
+        public double DeleteMeAt;
+    }
+
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.LocalSimulation)]
 public partial struct ClientLaserBeamTriggerEventSystem : ISystem
     {
@@ -36,7 +41,7 @@ public partial struct ClientLaserBeamTriggerEventSystem : ISystem
                 LocalTransformLookup= GetComponentLookup<LocalTransform>(true),
                 GhostOwnerLookup = GetComponentLookup<GhostOwner>(true),
             };
-            state.Dependency = triggerJob.Schedule(GetSingleton<SimulationSingleton>(),state.Dependency);
+            state.Dependency = triggerJob.Schedule(GetSingleton<SimulationSingleton>(), state.Dependency);
             state.Dependency.Complete();
 
             if (laserBeamsExploded.Length == 0)
@@ -51,15 +56,17 @@ public partial struct ClientLaserBeamTriggerEventSystem : ISystem
                     var ghostOwner = state.EntityManager.GetComponentData<GhostOwner>(laserBeam.Item1);
                     logMsg += $", NetworkID={ghostOwner.NetworkId}";
                 }
-                Debug.LogWarning($"{logMsg} hidden at tick {networkTime.ServerTick},{networkTime.InterpolationTick}");
+                //Debug.LogWarning($"{logMsg} hidden at tick {networkTime.ServerTick},{networkTime.InterpolationTick}");
             }
             var laserBeamSpawner = GetSingleton<LaserBeamSpawner>();
             var commandBuffer = new EntityCommandBuffer(state.WorldUpdateAllocator);
             foreach (var laserBeamExploded in laserBeamsExploded)
             {
                 var explosion = commandBuffer.Instantiate(laserBeamSpawner.ExplosionPrefab);
-                commandBuffer.SetComponent(explosion, laserBeamExploded.Item2);
-                commandBuffer.AddComponent<DisableRendering>(laserBeamExploded.Item1);
+                var deleteAt = state.WorldUnmanaged.Time.ElapsedTime + 2;
+                commandBuffer.AddComponent(explosion, laserBeamExploded.Item2);
+                commandBuffer.AddComponent(explosion, new LaserBeamExplosion {DeleteMeAt = deleteAt});
+                commandBuffer.AddComponent(laserBeamExploded.Item1, new DisableRendering(){});
             }
             commandBuffer.Playback(state.EntityManager);
         }

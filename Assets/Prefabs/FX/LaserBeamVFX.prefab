@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: -2936925461718313712}
   - component: {fileID: 1461470490332979401}
   - component: {fileID: 1615260916091215305}
-  - component: {fileID: 3695008801889095794}
   m_Layer: 6
   m_Name: LaserBeamVFX
   m_TagString: Untagged
@@ -274,8 +273,8 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 383
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 1
@@ -290,7 +289,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3153090887833783256}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.0000001
   m_LinearDamping: 0
   m_AngularDamping: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -345,19 +344,3 @@ MonoBehaviour:
   UsePreSerialization: 0
   RollbackPredictedSpawnedGhostState: 0
   RollbackPredictionOnStructuralChanges: 1
---- !u!114 &3695008801889095794
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3153090887833783256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b9db910a9b14655a251d9ff7ae626be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LaserBeamPrefab: {fileID: 3153090887833783256, guid: 4236010ebb7cb0d4f8b57b571528f9eb,
-    type: 3}
-  ExplosionPrefab: {fileID: 5454028126815171339, guid: afa76f11c2460a747abefdec3ab3716f,
-    type: 3}
